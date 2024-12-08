@@ -7,7 +7,8 @@ CREATE TABLE utenti (
   username TEXT UNIQUE NOT NULL,
   nome TEXT UNIQUE NOT NULL,
   cognome TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL
+  password TEXT NOT NULL,
+  is_admin INTEGER
 );
 
 CREATE TABLE eventi (
