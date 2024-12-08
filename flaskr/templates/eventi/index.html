@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Posts{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('eventi.create') }}">New</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% for evento in eventi %}
+    <article class="evento">
+      <header>
+        <div>
+          <h1>{{ evento['title'] }} - {{ evento['event_date'].strftime('%Y-%m-%d') }}</h1>
+          <div class="about">by {{ evento['username'] }} on {{ evento['created'].strftime('%Y-%m-%d') }}</div>
+        </div>
+        {% if g.user['id'] == evento['author_id'] %}
+          <a class="action" href="{{ url_for('eventi.update', id=evento['id']) }}">Edit</a>
+        {% endif %}
+      </header>
+      <p class="body">{{ evento['body'] }}</p>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

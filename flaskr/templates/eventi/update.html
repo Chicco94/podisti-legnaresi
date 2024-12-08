@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Edit "{{ evento['title'] }}"{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="title">Title</label>
+    <input name="title" id="title" value="{{ request.form['title'] or evento['title'] }}" required>
+    <label for="event_date">Data</label>
+    <input type="date"  name="event_date" id="event_date" value="{{ request.form['event_date'] or evento['event_date']}}" required>
+    <label for="body">Body</label>
+    <textarea name="body" id="body">{{ request.form['body'] or evento['body'] }}</textarea>
+    <input type="submit" value="Save">
+  </form>
+  <hr>
+  <form action="{{ url_for('eventi.delete', id=evento['id']) }}" method="post">
+    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+  </form>
+{% endblock %}

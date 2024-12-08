@@ -10,6 +10,8 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        nome = request.form['nome']
+        cognome = request.form['cognome']
         db = get_db()
         error = None
 
@@ -21,8 +23,8 @@ def register():
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO utenti (username, password,nome,cognome) VALUES (?,?,?, ?)",
+                    (username, generate_password_hash(password),nome,cognome),
                 )
                 db.commit()
             except db.IntegrityError:
@@ -42,7 +44,7 @@ def login():
         db = get_db()
         error = None
         user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
+            'SELECT * FROM utenti WHERE username = ?', (username,)
         ).fetchone()
 
         if user is None:
@@ -67,7 +69,7 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
+            'SELECT * FROM utenti WHERE id = ?', (user_id,)
         ).fetchone()
 
 @bp.route('/logout')
