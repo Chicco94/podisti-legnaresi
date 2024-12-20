@@ -6,7 +6,7 @@ from flaskr.db import get_db
 bp = Blueprint('eventi', __name__)
 
 
-@bp.route('/')
+@bp.route('/index')
 def index():
     db = get_db()
     eventi = db.execute(
