@@ -10,12 +10,14 @@ bp = Blueprint('eventi', __name__)
 def index():
     db = get_db()
     eventi = db.execute(
-        'SELECT e.id, title, body, created, author_id, username, event_date,ifnull(biglietti_prenotati,0) as biglietti_prenotati '
+        'SELECT e.id, title, body, created, author_id, u.username, event_date,event_visible_from,event_visible_to,ifnull(biglietti_prenotati,0) as biglietti_prenotati '
         'FROM eventi e ' 
         'JOIN utenti u ON e.author_id = u.id '
-        'LEFT JOIN utenti_eventi u ON id_evento = e.id AND id_utente = ? '
+        'LEFT JOIN utenti_eventi ue ON id_evento = e.id AND ue.id_utente = ? '
+        'LEFT JOIN utenti logged_user ON logged_user.id = ? '
+        'WHERE logged_user.is_admin OR CURRENT_DATE BETWEEN event_visible_from AND event_visible_to '
         'ORDER BY event_date DESC ',
-        (str(g.user['id']) if g.user else ' ')
+        (str(g.user['id']) if g.user else ' ', str(g.user['id']) if g.user else ' ')
     ).fetchall()
     return render_template('eventi/index.html', eventi=eventi)
 
@@ -27,6 +29,8 @@ def create():
         title = request.form['title']
         body = request.form['body']
         event_date = request.form['event_date']
+        event_visible_from = request.form['event_visible_from']
+        event_visible_to = request.form['event_visible_to']
         error = None
 
         if not title:
@@ -37,9 +41,9 @@ def create():
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO eventi (title, body, author_id, event_date)'
-                ' VALUES (?, ?, ?, ?)',
-                (title, body, g.user['id'], event_date)
+                'INSERT INTO eventi (title, body, author_id, event_date,event_visible_from,event_visible_to)'
+                ' VALUES (?, ?, ?, ?, ? , ?)',
+                (title, body, g.user['id'], event_date,event_visible_from,event_visible_to)
             )
             db.commit()
             return redirect(url_for('eventi.index'))
@@ -49,7 +53,7 @@ def create():
 
 def get_evento(id, check_author=True):
     evento = get_db().execute(
-        'SELECT p.id, title, body, created, author_id, username, event_date'
+        'SELECT p.id, title, body, created, author_id, username, event_date,event_visible_from,event_visible_to'
         ' FROM eventi p JOIN utenti u ON p.author_id = u.id'
         ' WHERE p.id = ?',
         (id,)
@@ -90,13 +94,14 @@ def get_prenotazione(id_evento,id_utente):
 @login_required
 def update(id):
     evento = get_evento(id)
-
+    print(evento['event_visible_from'])
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
         event_date = request.form['event_date']
+        event_visible_from = request.form['event_visible_from']
+        event_visible_to = request.form['event_visible_to']
         error = None
-
         if not title:
             error = 'Title is required.'
 
@@ -105,9 +110,10 @@ def update(id):
         else:
             db = get_db()
             db.execute(
-                'UPDATE eventi SET title = ?, body = ?, event_date=?'
+                'UPDATE eventi SET title = ?, body = ?, event_date=?,event_visible_from=?,event_visible_to=?'
                 ' WHERE id = ?',
-                (title, body, event_date, id)
+                (title, body, event_date,event_visible_from,event_visible_to
+                 , id)
             )
             db.commit()
             return redirect(url_for('eventi.index'))

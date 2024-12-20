@@ -10,6 +10,10 @@
     <input name="title" id="title" value="{{ request.form['title'] }}" required>
     <label for="event_date">Data</label>
     <input type="date"  name="event_date" id="event_date" value="{{ request.form['event_date'] }}" required>
+    <label for="event_date">Visibile da</label>
+    <input type="date"  name="event_visible_from" id="event_visible_from" value="{{ request.form['event_visible_from'] }}" required>
+    <label for="event_date">Visibile a</label>
+    <input type="date"  name="event_visible_to" id="event_visible_to" value="{{ request.form['event_visible_to'] }}" required>
     <label for="body">Body</label>
     <textarea name="body" id="body">{{ request.form['body'] }}</textarea>
     <input type="submit" value="Save">

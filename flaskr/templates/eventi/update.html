@@ -8,10 +8,19 @@
   <form method="post">
     <label for="title">Title</label>
     <input name="title" id="title" value="{{ request.form['title'] or evento['title'] }}" required>
+
     <label for="event_date">Data</label>
     <input type="date"  name="event_date" id="event_date" value="{{ request.form['event_date'] or evento['event_date']}}" required>
+
+    <label for="event_visible_from">Visibile da</label>
+    <input type="date"  name="event_visible_from" id="event_visible_from" value="{{ request.form['event_visible_from'] or evento['event_visible_from']}}" required>
+
+    <label for="event_visible_to">Visibile a</label>
+    <input type="date"  name="event_visible_to" id="event_visible_to" value="{{ request.form['event_visible_to'] or evento['event_visible_to']}}" required>
+
     <label for="body">Body</label>
     <textarea name="body" id="body">{{ request.form['body'] or evento['body'] }}</textarea>
+
     <input type="submit" value="Save">
   </form>
   <hr>

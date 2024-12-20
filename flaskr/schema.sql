@@ -18,6 +18,8 @@ CREATE TABLE eventi (
   event_date DATE NOT NULL,
   title TEXT NOT NULL,
   body TEXT NOT NULL,
+  event_visible_from DATE,
+  event_visible_to DATE,
   FOREIGN KEY (author_id) REFERENCES utenti (id)
 );
 
